@@ -1,0 +1,29 @@
+{
+  "name": "meilisearch-frontend",
+  "version": "1.0.0",
+  "description": "Meilisearch Place Search frontend",
+  "source": "src/index.html",
+  "browserslist": "> 0.5%, last 2 versions, not dead",
+  "scripts": {
+    "build": "parcel build",
+    "check": "tsc --noEmit",
+    "start": "parcel",
+    "fmt": "prettier -w src/*"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "flexboxgrid": "^6.3.1",
+    "meilisearch": "^0.22.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "devDependencies": {
+    "@parcel/transformer-sass": "^2.0.0",
+    "@types/react": "^17.0.31",
+    "@types/react-dom": "^17.0.10",
+    "parcel": "^2.0.0",
+    "prettier": "^2.4.1",
+    "typescript": "^4.4.4"
+  }
+}

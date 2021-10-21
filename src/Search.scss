@@ -1,0 +1,40 @@
+@import "base";
+
+.search {
+  padding: 1em;
+
+  input {
+    width: 100%;
+    padding: 0.5em;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    color: inherit;
+    border: $border-dark;
+    outline: none;
+  }
+
+  em {
+    background: $highlight-color;
+    font-style: normal;
+  }
+
+  table.hits {
+    border-bottom: $border-dark;
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 1em;
+  }
+
+  td.key {
+    text-align: right;
+    width: 4em;
+    border-right: $border-dark;
+    padding: 0 0.5em 0.5em 0;
+  }
+
+  td.value {
+    padding: 0 0 0.5em 0.5em;
+    text-align: left;
+  }
+}
