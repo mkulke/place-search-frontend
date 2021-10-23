@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { MeiliSearch, Hits, Hit } from "meilisearch";
+import { useState, useEffect } from "react";
+import { MeiliSearch, Hits, Hit, Index } from "meilisearch";
 import "./Search.scss";
 
 const KEYS = [
@@ -40,20 +40,51 @@ interface Address {
   state?: string;
 }
 
-async function parseAddress(q: string): Promise<Address | null> {
+async function parseAddress(
+  q: string,
+  signal: AbortSignal
+): Promise<Address | null> {
   if (q.length < 3) {
     return null;
   }
   const parseParams = new URLSearchParams({ q });
-  const response = await fetch(`${ADDRESS_PARSER_URL}/parse?${parseParams}`);
+  const response = await fetch(`${ADDRESS_PARSER_URL}/parse?${parseParams}`, {
+    signal,
+  });
   const address = response.json();
   return address;
 }
 
-type Value = `${Key} = ${string}`;
+async function search(
+  index: Index,
+  q: string,
+  signal: AbortSignal
+): Promise<Hits> {
+  const address = await parseAddress(q, signal);
+  const filter =
+    address !== null
+      ? [
+          ["type = poi", "type = stop", "type = address"],
+          ...buildFilters(address),
+        ]
+      : [["type = poi", "type = stop"]];
+  const search = await index.search(
+    q,
+    {
+      sort: [`_geoPoint(${SEARCH_LOC.lat},${SEARCH_LOC.lon}):asc`],
+      filter,
+      matches: true,
+      attributesToHighlight: [...KEYS],
+    },
+    { signal }
+  );
 
-function buildFilters(address: Address): Value[] {
-  const filter: Value[] = [`number = ${address.houseNumber}`];
+  return search.hits;
+}
+
+type FilterValue = `${Key} = ${string}`;
+function buildFilters(address: Address): FilterValue[] {
+  const filter: FilterValue[] = [`number = ${address.houseNumber}`];
   if (address.zipCode !== undefined) {
     filter.push(`zip = ${address.zipCode}`);
   }
@@ -62,31 +93,24 @@ function buildFilters(address: Address): Value[] {
 
 export default function Search() {
   const [hits, setHits] = useState<Hits>([]);
+  const [query, setQuery] = useState("");
 
   const client = new MeiliSearch({
     host: MS_URL,
   });
   const index = client.index("places");
 
-  const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const q = e.target.value;
-    const address = await parseAddress(q);
-    const filter =
-      address !== null
-        ? [
-            ["type = poi", "type = stop", "type = address"],
-            ...buildFilters(address),
-          ]
-        : [["type = poi", "type = stop"]];
-    const search = await index.search(q, {
-      sort: [`_geoPoint(${SEARCH_LOC.lat},${SEARCH_LOC.lon}):asc`],
-      filter,
-      matches: true,
-      attributesToHighlight: [...KEYS],
-    });
-
-    setHits(search.hits);
-  };
+  useEffect(() => {
+    const abortCtrl = new AbortController();
+    search(index, query, abortCtrl.signal)
+      .then(setHits)
+      .catch((error) => {
+        if (abortCtrl.signal.aborted !== true) {
+          throw error;
+        }
+      });
+    return () => abortCtrl.abort();
+  }, [query]);
 
   return (
     <div className="search">
@@ -97,7 +121,7 @@ export default function Search() {
         autoCorrect="off"
         autoCapitalize="none"
         spellCheck="false"
-        onChange={onChange}
+        onChange={(event) => setQuery(event.target.value)}
       />
       {hits.map((hit) => (
         <table className="hits" key={hit.id}>
