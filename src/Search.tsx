@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { MeiliSearch, Hits, Hit, Index } from "meilisearch";
 import "./Search.scss";
 
@@ -82,9 +82,9 @@ async function search(
   return search.hits;
 }
 
-type FilterValue = `${Key} = ${string}`;
-function buildFilters(address: Address): FilterValue[] {
-  const filter: FilterValue[] = [`number = ${address.houseNumber}`];
+type FilterExpr = `${Key} = ${string}`;
+function buildFilters(address: Address): FilterExpr[] {
+  const filter: FilterExpr[] = [`number = ${address.houseNumber}`];
   if (address.zipCode !== undefined) {
     filter.push(`zip = ${address.zipCode}`);
   }
