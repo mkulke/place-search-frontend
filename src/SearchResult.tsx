@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Hits, Hit, Index } from "meilisearch";
+import { Hits, Hit } from "meilisearch";
 import "./Search.scss";
 import { Address, index, parse } from "./data";
 
@@ -30,7 +30,6 @@ function getFormattedValue(hit: Hit, key: string): JSX.Element {
 }
 
 async function search(
-  index: Index,
   q: string,
   signal: AbortSignal
 ): Promise<Hits> {
@@ -43,7 +42,7 @@ async function search(
           ...buildFilters(address),
         ]
       : [["type = poi", "type = stop"]];
-  const search = await index.search(
+  const result = await index.search(
     q,
     {
       sort: [`_geoPoint(${SEARCH_LOC.lat},${SEARCH_LOC.lon}):asc`],
@@ -54,7 +53,7 @@ async function search(
     { signal }
   );
 
-  return search.hits;
+  return result.hits;
 }
 
 type Key = typeof KEYS[number];
@@ -73,7 +72,7 @@ function useSearch(query: string) {
 
   useEffect(() => {
     const abortCtrl = new AbortController();
-    search(index, query, abortCtrl.signal)
+    search(query, abortCtrl.signal)
       .then(setHits)
       .catch((error) => {
         if (abortCtrl.signal.aborted !== true) {
