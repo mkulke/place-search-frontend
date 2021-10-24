@@ -1,3 +1,4 @@
+import React from "react";
 import "../node_modules/flexboxgrid/dist/flexboxgrid.min.css";
 import Search from "./Search";
 
