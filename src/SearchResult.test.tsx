@@ -26,11 +26,11 @@ afterEach(() => {
   container = null;
 });
 
-it("shows results for an empty string", async () => {
+it("searches empty queries", async () => {
   mockedData.index.search.mockResolvedValue({ hits: [] } as any);
 
   await act(async () => {
-    render(<SearchResult q="1" />, container);
+    render(<SearchResult q="" />, container);
   });
 
   expect(mockedData.index.search).toHaveBeenCalled();
@@ -38,7 +38,18 @@ it("shows results for an empty string", async () => {
   expect(container!.querySelector(".result")!.children).toHaveLength(0);
 });
 
-it("shows results for a query string", async () => {
+it("does not parse addresses for a query length <= 3", async () => {
+  mockedData.index.search.mockResolvedValue({ hits: [] } as any);
+
+  await act(async () => {
+    render(<SearchResult q="abc" />, container);
+  });
+
+  expect(mockedData.index.search).toHaveBeenCalled();
+  expect(mockedData.parse).not.toHaveBeenCalled();
+});
+
+it("shows results", async () => {
   const place = {
     id: "1",
     name: "a place",
