@@ -61,9 +61,9 @@ type Key = typeof KEYS[number];
 type FilterExpr = `${Key} = ${string}`;
 
 function buildFilters(address: Address): FilterExpr[] {
-  const filter: FilterExpr[] = [`number = ${address.houseNumber}`];
+  const filter: FilterExpr[] = [`number = '${address.houseNumber}'`];
   if (address.zipCode !== undefined) {
-    filter.push(`zip = ${address.zipCode}`);
+    filter.push(`zip = '${address.zipCode}'`);
   }
   return filter;
 }
