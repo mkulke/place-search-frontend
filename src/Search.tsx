@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./Search.scss";
 import SearchResult from "./SearchResult";
 
-export default function Search() {
+export default function Search(): JSX.Element {
   const [query, setQuery] = useState("");
 
   return (

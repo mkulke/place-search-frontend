@@ -29,12 +29,19 @@ function getFormattedValue(hit: Hit, key: string): JSX.Element {
   );
 }
 
-async function search(
-  q: string,
-  signal: AbortSignal
-): Promise<Hits> {
+type Key = typeof KEYS[number];
+type FilterExpr = `${Key} = ${string}`;
+
+function buildFilters(address: Address): FilterExpr[] {
+  const filter: FilterExpr[] = [`number = '${address.houseNumber}'`];
+  if (address.zipCode !== undefined) {
+    filter.push(`zip = '${address.zipCode}'`);
+  }
+  return filter;
+}
+
+async function search(q: string, signal: AbortSignal): Promise<Hits> {
   const address = q.length > 3 ? await parse(q, signal) : null;
-  // const address = await parse(q, signal);
   const filter =
     address !== null
       ? [
@@ -56,18 +63,7 @@ async function search(
   return result.hits;
 }
 
-type Key = typeof KEYS[number];
-type FilterExpr = `${Key} = ${string}`;
-
-function buildFilters(address: Address): FilterExpr[] {
-  const filter: FilterExpr[] = [`number = '${address.houseNumber}'`];
-  if (address.zipCode !== undefined) {
-    filter.push(`zip = '${address.zipCode}'`);
-  }
-  return filter;
-}
-
-function useSearch(query: string) {
+function useSearch(query: string): [Hits] {
   const [hits, setHits] = useState<Hits>([]);
 
   useEffect(() => {
@@ -89,8 +85,8 @@ interface Props {
   q: string;
 }
 
-export default function SearchResult(props: Props) {
-  const [hits] = useSearch(props.q);
+export default function SearchResult({ q }: Props): JSX.Element {
+  const [hits] = useSearch(q);
 
   return (
     <div className="result">

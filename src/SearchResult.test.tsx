@@ -1,9 +1,9 @@
 import React from "react";
 import { render, unmountComponentAtNode } from "react-dom";
 import { act } from "react-dom/test-utils";
+import { mocked } from "ts-jest/utils";
 import SearchResult from "./SearchResult";
 import * as data from "./data";
-import { mocked } from "ts-jest/utils";
 
 jest.mock("./data", () => ({
   index: {
