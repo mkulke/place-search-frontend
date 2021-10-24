@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Hits, Hit, Index } from "meilisearch";
 import "./Search.scss";
 import { Address, index, parse } from "./data";
@@ -83,7 +83,7 @@ function useSearch(query: string) {
     return () => abortCtrl.abort();
   }, [query]);
 
-  return [ hits ]
+  return [hits];
 }
 
 interface Props {

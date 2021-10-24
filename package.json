@@ -7,7 +7,7 @@
   "scripts": {
     "test": "jest",
     "build": "parcel build",
-    "check": "tsc --noEmit",
+    "check": "tsc --noEmit && prettier -c src/*",
     "start": "parcel",
     "fmt": "prettier -w src/*"
   },

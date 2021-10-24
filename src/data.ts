@@ -1,7 +1,7 @@
 import { MeiliSearch } from "meilisearch";
 
 const MS_URL = "http://127.0.0.1:7700";
-const MS_INDEX = "places"
+const MS_INDEX = "places";
 const PARSER_URL = "http://127.0.0.1:8080";
 
 const client = new MeiliSearch({
@@ -26,8 +26,4 @@ async function parse(q: string, signal: AbortSignal): Promise<null | Address> {
   return response.json();
 }
 
-export {
-  Address,
-  index,
-  parse,
-}
+export { Address, index, parse };

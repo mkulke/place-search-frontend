@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import "./Search.scss";
 import SearchResult from "./SearchResult";
 
@@ -16,7 +16,7 @@ export default function Search() {
         spellCheck="false"
         onChange={(event) => setQuery(event.target.value)}
       />
-      <SearchResult q={query}/>
+      <SearchResult q={query} />
     </div>
   );
 }
